@@ -30,15 +30,44 @@ function loadImage() {
   gameOverImage.src = "img/gameOver.jpg";
 }
 
+let keysDown = {};
+
+function setupKeyboardListener() {
+  document.addEventListener("keydown", function (event) {
+    keysDown[event.key] = true;
+  });
+  document.addEventListener("keyup", function (event) {
+    delete keysDown[event.key];
+  });
+}
+
+function update() {
+  if ("ArrowRight" in keysDown) {
+    spaceshipImageX += 2; //우주선 이동 속도
+  } //오른쪽
+  if ("ArrowLeft" in keysDown) {
+    spaceshipImageX -= 2; //우주선 이동 속도
+  } //왼쪽
+
+  if (spaceshipImageX <= 0) {
+    spaceshipImageX = 0;
+  }
+  if (spaceshipImageX >= canvas.width - 60) {
+    spaceshipImageX = canvas.width - 60;
+  }
+}
+
 function render() {
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
   ctx.drawImage(spaceshipImage, spaceshipImageX, spaceshipImageY);
 }
 
 function main() {
-  render();
+  update(); // 좌표값을 업데이트하고
+  render(); // 그려주고
   requestAnimationFrame(main);
 }
 
 loadImage();
+setupKeyboardListener();
 main();
