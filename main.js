@@ -13,6 +13,18 @@ let backgroundImage, spaceshipImage, bulletImage, enemyImage, gameOverImage;
 let spaceshipImageX = canvas.width / 2 - 30; //170
 let spaceshipImageY = canvas.height - 60; //640
 
+let bulletList = []; // 총알들을 저장하는 리스트
+function Bullet() {
+  this.x = 0;
+  this.y = 0;
+  this.init = function () {
+    this.x = spaceshipX + 20;
+    this.y = spaceshipY;
+
+    bulletList.push(this);
+  };
+  this.update = function () {};
+}
 function loadImage() {
   backgroundImage = new Image();
   backgroundImage.src = "img/background.jpg";
@@ -34,11 +46,23 @@ let keysDown = {};
 
 function setupKeyboardListener() {
   document.addEventListener("keydown", function (event) {
+    console.log("무슨키?", event.key);
     keysDown[event.key] = true;
   });
   document.addEventListener("keyup", function (event) {
     delete keysDown[event.key];
+
+    if (event.key == "Arrowup") {
+      createBullet(); // 총알생성
+    }
   });
+}
+
+function createBullet() {
+  console.log("총알생성");
+  let b = new Bullet(); // 총알 하나 생성
+  b.init();
+  console.log("새로운총알리스트", bulletList);
 }
 
 function update() {
@@ -60,6 +84,10 @@ function update() {
 function render() {
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
   ctx.drawImage(spaceshipImage, spaceshipImageX, spaceshipImageY);
+
+  for (let i = 0; i < bulletList.length; i++) {
+    ctx.drawImage(bulletImag, bulletList[i].x, bulletList[i].y);
+  }
 }
 
 function main() {
@@ -71,3 +99,14 @@ function main() {
 loadImage();
 setupKeyboardListener();
 main();
+
+// 방향키를 누면
+// 우주선의 xy 좌표가 바뀌고
+// 다시 render 그려준다
+
+// 총알 만들기
+// 1. 스페이스바를 누르면 총알 나오기
+// 2. 총알 발사 = 총알의 y값이 --, 총알의 x값은? 스페이스바를 누른 순간의 우주선의 x좌표
+// 3. 발사된 총알들은 총알 배열에 저장을 한다.
+// 4. 모든 총알들은 x,y좌표값이 있어야 한다.
+// 5. 총알 배열을 가지고 render 그려준다.
